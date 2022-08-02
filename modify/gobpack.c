@@ -15,10 +15,10 @@ typedef struct {
 static void read_pcx(FILE *handle, void *buf, int buf_len, char *pal)
 {
 	unsigned char *buffer = buf;
-	short c1;
-	short a, b;
-	long ofs1;
-	if (buffer != 0) {
+	if (buffer) {
+		short c1;
+		short a, b;
+		long ofs1;
 		fseek(handle, 128, SEEK_CUR);
 		ofs1 = 0;
 		while (ofs1 < buf_len) {
@@ -31,7 +31,7 @@ static void read_pcx(FILE *handle, void *buf, int buf_len, char *pal)
 			} else
 				buffer[ofs1++] = (char) a;
 		}
-		if (pal != 0) {
+		if (pal) {
 			fseek(handle, 1, SEEK_CUR);
 			for (c1 = 0; c1 < 768; c1++)
 				pal[c1] = fgetc(handle) >> 2;
@@ -172,9 +172,10 @@ int main(int argc, char **argv)
 {
 	int usage = 0;
 	int unpack = 0;
+	int code = 0;
 	FILE *f;
 	int len;
-	gob_t gob;
+	gob_t gob = { 0 };
 	char *filename = NULL;
 
 	if (argc < 2)
@@ -229,7 +230,8 @@ int main(int argc, char **argv)
 		f = fopen(filename, "rb");
 		if (!f) {
 			printf("Couldn't open file %s\n", filename);
-			return -1;
+			code = -1;
+			goto u_fail_gob;
 		}
 		fseek(f, 0, SEEK_END);
 		len = ftell(f);
@@ -253,7 +255,8 @@ int main(int argc, char **argv)
 		data = malloc(400 * 256);
 		if (!data) {
 			printf("Not enough memory!\n");
-			return -1;
+			code = -1;
+			goto fail_data;
 		}
 		memset(data, 0, 400 * 256);
 
@@ -284,7 +287,8 @@ int main(int argc, char **argv)
 		f = fopen(filename, "wb");
 		if (!f) {
 			printf("Couldn't open file %s\n", filename);
-			return -1;
+			code = -1;
+			goto u_fail_pcx;
 		}
 
 		write_pcx(f, data, 400, 256, pal);
@@ -296,7 +300,8 @@ int main(int argc, char **argv)
 		f = fopen(filename, "w");
 		if (!f) {
 			printf("Couldn't open file %s\n", filename);
-			return -1;
+			code = -1;
+			goto u_fail_txt;
 		}
 
 		fprintf(f, "num_images: %i\n\n", gob.num_images);
@@ -319,6 +324,12 @@ int main(int argc, char **argv)
 		}
 
 		fclose(f);
+
+		u_fail_txt:
+		u_fail_pcx:
+		fail_data:
+		u_fail_gob:
+		free(filename);
 	} else {
 		unsigned char *data;
 		int i = 0;
@@ -333,7 +344,8 @@ int main(int argc, char **argv)
 		filename = malloc(strlen(argv[1]) + 5);
 		if (!filename) {
 			printf("Not enough memory!\n");
-			return -1;
+			code = -1;
+			goto fail_filename;
 		}
 
 		strcpy(filename, argv[1]);
@@ -341,7 +353,8 @@ int main(int argc, char **argv)
 		f = fopen(filename, "rb");
 		if (!f) {
 			printf("Couldn't open file %s\n", filename);
-			return -1;
+			code = -1;
+			goto p_fail_pcx;
 		}
 
 		read_pcx(f, data, 400 * 256, NULL);
@@ -353,7 +366,8 @@ int main(int argc, char **argv)
 		f = fopen(filename, "r");
 		if (!f) {
 			printf("Couldn't open file %s\n", filename);
-			return -1;
+			code = -1;
+			goto p_fail_txt;
 		}
 
 		gob.num_images = 0;
@@ -362,11 +376,12 @@ int main(int argc, char **argv)
 			char buffer[1024];
 			int value;
 
-			fscanf(f, "%s %i\n", buffer, &value);
+			fscanf(f, "%11s %i\n", buffer, &value);
 			if (strcmp(buffer, "num_images:") == 0) {
 				if (gob.num_images != 0) {
 					printf("Parse error in %s\n", filename);
-					return -1;
+					code = -1;
+					goto fail_parse;
 				}
 				gob.num_images = value;
 				gob.width = malloc(gob.num_images * sizeof(int));
@@ -410,7 +425,8 @@ int main(int argc, char **argv)
 		f = fopen(filename, "wb");
 		if (!f) {
 			printf("Couldn't open file %s\n", filename);
-			return -1;
+			code = -1;
+			goto p_fail_gob;
 		}
 
 		write_gob(f, &gob);
@@ -418,7 +434,20 @@ int main(int argc, char **argv)
 		fclose(f);
 
 		printf("%s build\n", filename);
+
+		p_fail_gob:
+		fail_parse:
+		free(gob.width);
+		free(gob.height);
+		free(gob.hs_x);
+		free(gob.hs_y);
+		free(gob.data);
+		free(gob.orig_data);
+		p_fail_txt:
+		p_fail_pcx:
+		fail_filename:
+		free(data);
 	}
 
-	return 0;
+	return code;
 }
