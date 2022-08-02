@@ -99,7 +99,7 @@ int main(int argc, char **argv)
 	num_entries = argc;
 
 	/* prepare to pack things - get sizes and calculate offsets */
-	printf("%u files to pack\n", num_entries);
+	printf("%i files to pack\n", num_entries);
 	datafile = calloc(num_entries, sizeof(DirEntry));
 
 	/* skip past the directory structure */
