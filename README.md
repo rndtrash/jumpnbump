@@ -52,12 +52,27 @@ the players are using the same `-dat level.dat`, if any.
 
 ## Compilation
 
-To build Jump 'n Bump you will need the SDL2, SDL2_mixer and SDL2_net
-development libraries, as well as BZip2 and Zlib.
+Clone this repo and pull all the submodules with
+`git clone --recurse-submodules https://github.com/rndtrash/jumpnbump.git`
 
-You can then run `make` to build the engine, and `make install` (as root or
-sudo) to install it system wide. You can impact the default installation paths
-via the Make variables defined at the top of the `Makefile`.
+To build Jump 'n Bump you will need development libraries for the SDL2, SDL2_mixer, SDL2_net,
+BZip2 and Zlib, as well as CMake to generate the Makefiles.
+
+You can then run `cmake -B build` in the root of the repo to configure this project into `build` folder and either
+run `cmake --build build` or go to the `build` folder and run `make`.
+
+Jump 'n Bump has the following options available for CMake that can be used with
+`cmake -B build -DPARAM=ON -DOTHERPARAM=OFF`:
+
+|Option|Description|Default value|
+|------|-----------|-------------|
+|DATADIR|The folder where data such as desktop icons and shortcuts is stored.|`${CMAKE_INSTALL_PREFIX}/share`|
+|GAMEDATADIR|The folder where game data is stored.|`${CMAKE_INSTALL_PREFIX}/share`|
+|USE_SDL|Use SDL2. At the moment there is no point in disabling it.|ON|
+|USE_SDL_MIXER|Use SDL2 mixer.|ON|
+|USE_NET|Add online multiplayer. Requires SDL2 net.|ON|
+|ZLIB_SUPPORT|Use Zlib.|ON|
+|BZLIB_SUPPORT|Use BZip2.|ON|
 
 ## License
 

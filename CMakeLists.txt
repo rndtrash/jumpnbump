@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 
 project(JumpNBump VERSION 1.70.0)
 
+include(GNUInstallDirs)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 set(DATADIR ${CMAKE_INSTALL_PREFIX}/share)
 set(GAMEDATADIR ${CMAKE_INSTALL_PREFIX}/share)

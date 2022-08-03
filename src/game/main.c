@@ -813,12 +813,10 @@ static int menu_loop(void)
 
 int main(int argc, char *argv[])
 {
-	int result;
+	int result = -1;
 
-	if (init_program(argc, argv, pal) != 0)
-		deinit_program();
-
-	result = menu_loop();
+	if (init_program(argc, argv, pal) == 0)
+		result = menu_loop();
 
 	deinit_program();
 
