@@ -57,7 +57,7 @@ int menu(void)
 	int esc_pressed;
 	int end_loop_flag, new_game_flag, fade_flag;
 	int mod_vol = 0, mod_fade_direction = 0;
-	int cur_message;
+	size_t cur_message;
 	int fade_dir, fade_count;
 	char fade_pal[48];
 	int update_count;

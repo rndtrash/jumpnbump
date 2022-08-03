@@ -7,6 +7,10 @@
   - Move appdata file to metainfo directory (Linux)
   - Applied `clang-format` to code base
   - Packaging fixes and cleanups
+  - Fixed memory leak in gobpack
+  - Allowed jnbpack to take the full path
+  - Added an output option for gobpack
+  - Moved the build system to CMake
 
 24 May 2017 - 1.60
   - Ported to SDL2

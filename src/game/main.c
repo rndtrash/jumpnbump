@@ -238,6 +238,34 @@ int pogostick, bunnies_in_space, jetpack, lord_of_the_flies, blood_is_thicker_th
 
 int client_player_num = -1;
 
+int stricmp(const char* str1, const char* str2)
+{
+	int ca, cb;
+
+	do
+	{
+		ca = tolower((unsigned char) *str1++);
+		cb = tolower((unsigned char) *str2++);
+	}
+	while(ca == cb && ca != '\0');
+
+	return ca - cb;
+}
+
+int strnicmp(const char* str1, const char* str2, size_t count)
+{
+	int ca, cb;
+
+	do
+	{
+		ca = tolower((unsigned char) *str1++);
+		cb = tolower((unsigned char) *str2++);
+	}
+	while(ca == cb && ca != '\0' && --count);
+
+	return ca - cb;
+}
+
 #ifndef _WIN32
 int filelength(int handle)
 {
@@ -1901,6 +1929,8 @@ void draw_flies(int page)
 {
 	int c2;
 
+	(void) page;
+
 	for (c2 = 0; c2 < NUM_FLIES; c2++) {
 		flies[c2].back[main_info.draw_page] = get_pixel(main_info.draw_page, flies[c2].x, flies[c2].y);
 		flies[c2].back_defined[main_info.draw_page] = 1;
@@ -1977,6 +2007,8 @@ int init_level(int level, char *pal)
 	unsigned char *handle;
 	int c1, c2;
 	int s1, s2;
+
+	(void) level;
 
 	if ((handle = dat_open("level.pcx")) == 0) {
 		strcpy(main_info.error_str, "Error loading 'level.pcx', aborting...\n");
@@ -2748,7 +2780,8 @@ void write_calib_data(void)
 {
 	FILE *handle;
 	int c1;
-	int len, num;
+	size_t len;
+	int num;
 	char *mem;
 	int ofs;
 
@@ -2757,7 +2790,7 @@ void write_calib_data(void)
 	len = filelength(fileno(handle));
 	if ((mem = malloc(len)) == NULL)
 		return;
-	fread(mem, 1, len, handle);
+	assert(fread(mem, 1, len, handle) == len);
 	fclose(handle);
 
 	ofs = 4;

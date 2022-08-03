@@ -246,6 +246,7 @@ void fs_toggle()
 
 void wait_vrt(int mix)
 {
+	(void) mix;
 	return;
 }
 
@@ -657,6 +658,8 @@ void put_pob(int page, int x, int y, int image, gob_t *gob, int use_mask, void *
 	unsigned char *pob_ptr;
 	unsigned char *mask_ptr;
 
+	(void) mask_pic;
+
 	assert(drawing_enable == 1);
 	assert(gob);
 	assert(image >= 0);
@@ -856,6 +859,8 @@ int register_gob(unsigned char *handle, gob_t *gob, int len)
 
 void recalculate_gob(gob_t *gob, char pal[768])
 {
+	(void) gob;
+	(void) pal;
 }
 
 void register_mask(void *pixels)

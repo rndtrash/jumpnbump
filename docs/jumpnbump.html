@@ -3,75 +3,74 @@
 
 <html>
 <head>
-<title>jumpnbump(6) manual page</title>
+<title>"Jump('n) manual page</title>
 </head>
 <body bgcolor='white'>
 <a href='#toc'>Table of Contents</a><p>
 
 <h2><a name='sect0' href='#toc0'>Name</a></h2>
-Jump &rsquo;n Bump - Cute multiplayer platform game with bunnies 
+jumpnbump - Cute multiplayer platform game with bunnies 
 <h2><a name='sect1' href='#toc1'>Synopsis</a></h2>
 jumpnbump
-[<b>-dat <i>levelname</i></b>] [<b>-port <i>port <b>-net <i>player hostname rport</i></b></i></b>] [<b>-fullscreen</b>] [<b>-nosound</b>]
-[<b>-musicnosound</b>] [<b>-nogore</b>] [<b>-noflies</b>] [<b>-mirror</b>] [<b>-scaleup</b>] [<b>-v</b>] [<b>-h</b>] 
+[<b>-dat <i>levelname</i></b>] [<b>-server <i>clients_number</i></b>] [<b>-connect <i>hostname</i></b>] [<b>-fullscreen</b>]
+[<b>-nosound</b>] [<b>-musicnosound</b>] [<b>-nogore</b>] [<b>-noflies</b>] [<b>-mirror</b>] [<b>-scaleup</b>] [<b>-v</b>] [<b>-h</b>]
+
 <h2><a name='sect2' href='#toc2'>Description</a></h2>
-You,
-as a bunny, have to jump on your opponents to make them explode. It&rsquo;s a true
-multiplayer game, you can&rsquo;t play this alone. It has network support. 
+You, as a bunny, have to jump on your opponents to make them
+explode. It&rsquo;s a true multiplayer game, you can&rsquo;t play this alone. It has network
+support. 
 <h2><a name='sect3' href='#toc3'>Options</a></h2>
 
 <dl>
 
-<dt>-dat
-<i>levelname</i></dt>
-<dd>Load <i>levelname</i> and use it as the level for this game. </dd>
+<dt>-dat <i>levelname</i></dt>
+<dd>Load <i>levelname</i> and use it as the level for
+this game. </dd>
 
-<dt>-port <i>port</i></dt>
-<dd>Use
-<i>port</i> as the port to listen on for a network game. Use this with -net. </dd>
-
-<dt>-net
-<i>player hostname rport</i></dt>
-<dd>Connect (using a network) to another person running
-Jump &rsquo;n Bump on <i>hostname</i>, and listening on <i>rport</i>. You will be player number
-<i>player</i>. </dd>
-
-<dt>-fullscreen</dt>
-<dd>Run Jump &rsquo;n Bump in fullscreen mode. </dd>
-
-<dt>-nosound</dt>
-<dd>Run Jump &rsquo;n Bump
-without sound. </dd>
-
-<dt>-musicnosound</dt>
-<dd>Run Jump &rsquo;n Bump with music but no sound effects.
+<dt>-server <i>clients_number</i></dt>
+<dd>Start as a server waiting on port TCP 11111
+and wait for <i>client_numbers</i> clients to connect before starting the game.
 </dd>
 
+<dt>-connect <i>hostname</i></dt>
+<dd>Connect (using IP network) to remote server <i>hostname</i>. </dd>
+
+<dt>-fullscreen</dt>
+<dd>Run
+Jump &rsquo;n Bump in fullscreen mode. </dd>
+
+<dt>-nosound</dt>
+<dd>Run Jump &rsquo;n Bump without sound. </dd>
+
+<dt>-musicnosound</dt>
+<dd>Run
+Jump &rsquo;n Bump with music but no sound effects. </dd>
+
 <dt>-nogore</dt>
-<dd>Play without blood, familymode. </dd>
+<dd>Play without blood, familymode.
+</dd>
 
 <dt>-noflies</dt>
 <dd>Disable flies. </dd>
 
 <dt>-mirror</dt>
-<dd>Play with
-mirrored level. </dd>
+<dd>Play with mirrored level. </dd>
 
 <dt>-scaleup</dt>
-<dd>Play with doublesize resolution (800x512). </dd>
+<dd>Play with doublesize
+resolution (800x512). </dd>
 
 <dt>-h</dt>
-<dd>Print
-help. </dd>
+<dd>Print help. </dd>
 
 <dt>-v</dt>
-<dd>Print version, compile time and if network code is compiled in. </dd>
+<dd>Print version, compile time and if network
+code is compiled in. </dd>
 </dl>
 
 <h2><a name='sect4' href='#toc4'>Usage</a></h2>
-The
-goal of the game is to jump on the other players. Each rabbit has three
-control keys. 
+The goal of the game is to jump on the other players.
+Each rabbit has three control keys. 
 <dl>
 
 <dt>Player 1 (Dott)</dt>

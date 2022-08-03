@@ -36,6 +36,7 @@ static SDL_Joystick *joys[4];
 
 int calib_joy(int type)
 {
+	(void) type;
 	return 1;
 }
 

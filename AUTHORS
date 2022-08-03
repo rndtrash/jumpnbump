@@ -69,3 +69,6 @@ Côme Chilliet <come@chilliet.eu>
 
 Rémi Verschelde <remi@verschelde.fr>
   Packaging fixes and cleanups.
+
+Ivan Kuzmenko <kuzmenko.ivan1234@gmail.com>
+  Makefile to CMake conversion.

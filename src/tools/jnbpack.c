@@ -24,6 +24,7 @@
  */
 
 #include <fcntl.h>
+#include <libgen.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -112,11 +113,17 @@ int main(int argc, char **argv)
 			perror("");
 			exit(1);
 		}
-		if (strlen(argv[i]) > 12) {
+
+		char* filename = strdup(argv[i]);
+		int valid = strlen(basename(filename)) <= 12;
+		if (!valid) {
 			fprintf(stderr, "filename %s is longer than 12 chars\n", argv[i]);
+			free(filename);
 			exit(1);
 		}
-		strncpy(datafile[i].filename, argv[i], 12);
+
+		strncpy(datafile[i].filename, filename, 12);
+		free(filename);
 		datafile[i].size = dummy.st_size;
 		/* num_entries * (12 + 8) */
 		datafile[i].offset = offset;
@@ -149,7 +156,7 @@ int main(int argc, char **argv)
 	for (i = 0; i < num_entries; i++) {
 		char temp;
 
-		write(fd, &datafile[i].filename, 12);
+		write(fd, datafile[i].filename, 12);
 		temp = (datafile[i].offset >> 0) & 0xff;
 		write(fd, &temp, 1);
 		temp = (datafile[i].offset >> 8) & 0xff;
@@ -175,7 +182,7 @@ int main(int argc, char **argv)
 
 		printf("adding %s ", argv[i]);
 
-		infd = open(argv[i], O_RDONLY | O_BINARY);
+		infd = open(argv[i], O_RDONLY | O_BINARY); // taking the original path
 		if (infd == -1) {
 			perror("opening file");
 			exit(1);

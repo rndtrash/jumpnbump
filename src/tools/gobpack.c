@@ -177,22 +177,34 @@ int main(int argc, char **argv)
 	int len;
 	gob_t gob = { 0 };
 	char *filename = NULL;
+	int filename_offset = 1;
+	char *output = NULL;
 
 	if (argc < 2)
 		usage = 1;
 
-	if (argc > 1)
-		if (argv[1][0] == '-') {
-			if (argv[1][1] == 'u') {
-				if (argc < 3)
-					usage = 1;
-				unpack = 1;
-			} else
+	if (argv[1][0] == '-') {
+		if (argv[1][1] == 'u')
+		{
+			if (argc < 3)
 				usage = 1;
+			unpack = 1;
 		}
+		else if (argv[1][1] == 'o')
+		{
+			if (argc < 3)
+				usage = 1;
+			output = argv[2];
+			filename_offset = 3;
+		}
+		else
+		{
+			usage = 1;
+		}
+	}
 
 	if (usage) {
-		printf("Usage: gobpack [-u] <file> [palette.pcx]\n\t-u to unpack the gob\n");
+		printf("Usage: gobpack [-o output_file] [-u] <file> [palette.pcx]\n\t-u to unpack the gob\n\t-o - output\n");
 		return 1;
 	}
 
@@ -341,14 +353,14 @@ int main(int argc, char **argv)
 			return -1;
 		}
 
-		filename = malloc(strlen(argv[1]) + 5);
+		filename = malloc(strlen(argv[filename_offset]) + 5);
 		if (!filename) {
 			printf("Not enough memory!\n");
 			code = -1;
 			goto fail_filename;
 		}
 
-		strcpy(filename, argv[1]);
+		strcpy(filename, argv[filename_offset]);
 		strcat(filename, ".pcx");
 		f = fopen(filename, "rb");
 		if (!f) {
@@ -361,7 +373,7 @@ int main(int argc, char **argv)
 
 		fclose(f);
 
-		strcpy(filename, argv[1]);
+		strcpy(filename, argv[filename_offset]);
 		strcat(filename, ".txt");
 		f = fopen(filename, "r");
 		if (!f) {
@@ -420,8 +432,13 @@ int main(int argc, char **argv)
 
 		fclose(f);
 
-		strcpy(filename, argv[1]);
-		strcat(filename, ".gob");
+		if (output)
+			strcpy(filename, output);
+		else
+		{
+			strcpy(filename, argv[filename_offset]);
+			strcat(filename, ".gob");
+		}
 		f = fopen(filename, "wb");
 		if (!f) {
 			printf("Couldn't open file %s\n", filename);

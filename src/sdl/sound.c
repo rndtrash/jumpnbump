@@ -159,6 +159,8 @@ void mix_sound(void *unused, Uint8 *stream, int len)
 	/* Mixing channel index. */
 	int chan;
 
+	(void) unused;
+
 	/* Left and right channel */
 	/*  are in audio stream, alternating. */
 	leftout = (signed short *) stream;
@@ -314,11 +316,13 @@ char dj_autodetect_sd(void)
 
 char dj_set_stereo(char flag)
 {
+	(void) flag;
 	return 0;
 }
 
 void dj_set_auto_mix(char flag)
 {
+	(void) flag;
 }
 
 unsigned short dj_set_mixing_freq(unsigned short freq)
@@ -328,10 +332,12 @@ unsigned short dj_set_mixing_freq(unsigned short freq)
 
 void dj_set_dma_time(unsigned short time)
 {
+	(void) time;
 }
 
 void dj_set_nosound(char flag)
 {
+	(void) flag;
 }
 
 /* mix handling */
@@ -360,6 +366,9 @@ void dj_set_sfx_volume(char volume)
 void dj_play_sfx(unsigned char sfx_num, unsigned short freq, char volume, char panning, unsigned short delay, signed char channel)
 {
 	int slot;
+
+	(void) panning;
+	(void) delay;
 
 	if (main_info.music_no_sound || main_info.no_sound)
 		return;
@@ -422,6 +431,9 @@ char dj_load_sfx(unsigned char *file_handle, char *filename, int file_length, ch
 	unsigned int i;
 	unsigned char *src;
 	unsigned short *dest;
+
+	(void) filename;
+	(void) sfx_type;
 
 	if (main_info.no_sound)
 		return 0;
@@ -566,7 +578,9 @@ void dj_stop_mod(void)
 
 void dj_set_mod_volume(char volume)
 {
-#ifndef NO_SDL_MIXER
+#ifdef NO_SDL_MIXER
+	(void) volume;
+#else
 	if (main_info.no_sound)
 		return;
 
@@ -576,9 +590,13 @@ void dj_set_mod_volume(char volume)
 
 char dj_load_mod(unsigned char *file_handle, char *filename, char mod_num)
 {
+	(void) file_handle;
+	(void) filename;
+	(void) mod_num;
 	return 0;
 }
 
 void dj_free_mod(char mod_num)
 {
+	(void) mod_num;
 }
