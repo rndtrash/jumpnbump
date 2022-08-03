@@ -50,7 +50,7 @@ static SDL_Texture *jnb_texture;
 static SDL_Surface *jnb_surface;
 static int fullscreen = 0;
 static int vinited = 0;
-static void *screen_buffer[2] = { NULL };
+static void *screen_buffer[2] = {NULL};
 static int drawing_enable = 0;
 static void *background = NULL;
 static int background_drawn;
