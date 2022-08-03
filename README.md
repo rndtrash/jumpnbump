@@ -74,6 +74,8 @@ Jump 'n Bump has the following options available for CMake that can be used with
 |ZLIB_SUPPORT|Use Zlib.|ON|
 |BZLIB_SUPPORT|Use BZip2.|ON|
 
+You can install the project with `cmake --install build` or `make install` in the `build` folder. May require root depending on your installation prefix.
+
 ## License
 
 Jump 'n Bump is distributed under the GNU General Public License, version 2, or
