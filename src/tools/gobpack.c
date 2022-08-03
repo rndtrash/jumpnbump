@@ -455,14 +455,14 @@ int main(int argc, char **argv)
 
 		fclose(f);
 
-		if (output)
-			strcpy(filename, output);
-		else
+		char* filename_gob = output;
+		if (!filename_gob)
 		{
+			filename_gob = filename;
 			strcpy(filename, argv[filename_offset]);
 			strcat(filename, ".gob");
 		}
-		f = fopen(filename, "wb");
+		f = fopen(filename_gob, "wb");
 		if (!f) {
 			printf("Couldn't open file %s\n", filename);
 			code = -1;
@@ -482,9 +482,14 @@ int main(int argc, char **argv)
 		free(gob.hs_x);
 		free(gob.hs_y);
 		free(gob.data);
+		for (i = 0; i < gob.num_images; i++)
+		{
+			free(gob.orig_data[i]);
+		}
 		free(gob.orig_data);
 		p_fail_txt:
 		p_fail_pcx:
+		free(filename);
 		fail_filename:
 		free(data);
 	}
