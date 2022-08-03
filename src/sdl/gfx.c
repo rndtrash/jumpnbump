@@ -792,6 +792,8 @@ int read_pcx(unsigned char *handle, void *buf, int buf_len, char *pal)
 
 void register_background(unsigned char *pixels, char pal[768])
 {
+	(void) pal;
+
 	if (background) {
 		free(background);
 		background = NULL;
