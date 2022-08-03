@@ -122,9 +122,8 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 
-		char *filename = strdup(argv[i]);
-		int valid = strlen(basename(filename)) <= 12;
-		if (!valid) {
+		char *filename = strdup(basename(argv[i]));
+		if (strlen(filename) > 12) {
 			fprintf(stderr, "filename %s is longer than 12 chars\n", argv[i]);
 			free(filename);
 			exit(1);
