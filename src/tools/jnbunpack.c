@@ -98,14 +98,10 @@ int main(int argc, char **argv)
 		char *buf;
 
 		int j = 2;
-		for (int k = 0; datafile[i].filename[k] != '\0' && k < FILENAME_LENGTH && j < 2 + FILENAME_LENGTH; k++)
-		{
-			if (datafile[i].filename[k] == '.' && datafile[i].filename[k + 1] == '.')
-			{
+		for (int k = 0; datafile[i].filename[k] != '\0' && k < FILENAME_LENGTH && j < 2 + FILENAME_LENGTH; k++) {
+			if (datafile[i].filename[k] == '.' && datafile[i].filename[k + 1] == '.') {
 				k++; // and one more ++ from for
-			}
-			else if (datafile[i].filename[k] != '/' && datafile[i].filename[k] != '\\')
-			{
+			} else if (datafile[i].filename[k] != '/' && datafile[i].filename[k] != '\\') {
 				filename[j] = datafile[i].filename[k];
 				j++;
 			}
