@@ -477,17 +477,11 @@ int main(int argc, char **argv)
 
 		p_fail_gob:
 		fail_parse:
-		printf("1");
 		free(gob.width);
-		printf("1");
 		free(gob.height);
-		printf("1");
 		free(gob.hs_x);
-		printf("1");
 		free(gob.hs_y);
-		printf("1");
 		free(gob.data);
-		printf("1");
 		free(gob.orig_data);
 		p_fail_txt:
 		p_fail_pcx:
