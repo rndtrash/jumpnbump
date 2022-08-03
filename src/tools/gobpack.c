@@ -44,10 +44,10 @@ static void write_pcx(FILE *pcxfile, unsigned char *data, int width, int height,
 	int i;
 
 	fputc(0x0a, pcxfile); /* manufacturer */
-	fputc(5, pcxfile); /* version */
-	fputc(1, pcxfile); /* encoding */
-	fputc(8, pcxfile); /* bits_per_pixel */
-	fputc(0, pcxfile); /* xmin */
+	fputc(5, pcxfile);    /* version */
+	fputc(1, pcxfile);    /* encoding */
+	fputc(8, pcxfile);    /* bits_per_pixel */
+	fputc(0, pcxfile);    /* xmin */
 	fputc(0, pcxfile);
 	fputc(0, pcxfile); /* ymin */
 	fputc(0, pcxfile);
@@ -61,8 +61,8 @@ static void write_pcx(FILE *pcxfile, unsigned char *data, int width, int height,
 	fputc((height >> 8) & 0xff, pcxfile);
 	for (i = 0; i < 48; i++) /* palette */
 		fputc(0, pcxfile);
-	fputc(0, pcxfile); /* reserved */
-	fputc(1, pcxfile); /* color_planes */
+	fputc(0, pcxfile);            /* reserved */
+	fputc(1, pcxfile);            /* color_planes */
 	fputc(width & 0xff, pcxfile); /* bytes_per_line */
 	fputc((width >> 8) & 0xff, pcxfile);
 	fputc(1 & 0xff, pcxfile); /* palette_type */
@@ -102,8 +102,7 @@ int read_gob(FILE *handle, gob_t *gob, size_t len)
 	if (!gob_data)
 		return 0;
 
-	if (fread(gob_data, 1, len, handle) != len)
-	{
+	if (fread(gob_data, 1, len, handle) != len) {
 		free(gob_data);
 		return 0;
 	}
@@ -185,7 +184,7 @@ int main(int argc, char **argv)
 	int code = 0;
 	FILE *f;
 	int len;
-	gob_t gob = { 0 };
+	gob_t gob = {0};
 	char *filename = NULL;
 	int filename_offset = 1;
 	char *output = NULL;
@@ -194,21 +193,16 @@ int main(int argc, char **argv)
 		usage = 1;
 
 	if (argv[1][0] == '-') {
-		if (argv[1][1] == 'u')
-		{
+		if (argv[1][1] == 'u') {
 			if (argc < 3)
 				usage = 1;
 			unpack = 1;
-		}
-		else if (argv[1][1] == 'o')
-		{
+		} else if (argv[1][1] == 'o') {
 			if (argc < 3)
 				usage = 1;
 			output = argv[2];
 			filename_offset = 3;
-		}
-		else
-		{
+		} else {
 			usage = 1;
 		}
 	}
@@ -235,8 +229,7 @@ int main(int argc, char **argv)
 				i = fgetc(f);
 				if (i == 0x0c) {
 					pal = palette;
-					if (fread(pal, 1, 768, f) != 768)
-					{
+					if (fread(pal, 1, 768, f) != 768) {
 						printf("Failed to read the palette!\n");
 						fclose(f);
 						return -1;
@@ -352,10 +345,10 @@ int main(int argc, char **argv)
 
 		fclose(f);
 
-		u_fail_txt:
-		u_fail_pcx:
-		fail_data:
-		u_fail_gob:
+	u_fail_txt:
+	u_fail_pcx:
+	fail_data:
+	u_fail_gob:
 		free(filename);
 	} else {
 		unsigned char *data;
@@ -405,8 +398,7 @@ int main(int argc, char **argv)
 			int arguments;
 
 			arguments = fscanf(f, "%11s %i\n", buffer, &value);
-			if (arguments != 2)
-			{
+			if (arguments != 2) {
 				printf("Parse error: arguments != 2\n");
 				code = -1;
 				goto fail_parse;
@@ -455,9 +447,8 @@ int main(int argc, char **argv)
 
 		fclose(f);
 
-		char* filename_gob = output;
-		if (!filename_gob)
-		{
+		char *filename_gob = output;
+		if (!filename_gob) {
 			filename_gob = filename;
 			strcpy(filename, argv[filename_offset]);
 			strcat(filename, ".gob");
@@ -475,22 +466,21 @@ int main(int argc, char **argv)
 
 		printf("%s build\n", filename);
 
-		p_fail_gob:
-		fail_parse:
+	p_fail_gob:
+	fail_parse:
 		free(gob.width);
 		free(gob.height);
 		free(gob.hs_x);
 		free(gob.hs_y);
 		free(gob.data);
-		for (i = 0; i < gob.num_images; i++)
-		{
+		for (i = 0; i < gob.num_images; i++) {
 			free(gob.orig_data[i]);
 		}
 		free(gob.orig_data);
-		p_fail_txt:
-		p_fail_pcx:
+	p_fail_txt:
+	p_fail_pcx:
 		free(filename);
-		fail_filename:
+	fail_filename:
 		free(data);
 	}
 

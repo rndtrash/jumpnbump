@@ -98,120 +98,7 @@ struct {
 		int ticks;
 	} frame[10];
 } object_anims[8] = {
-	{
-		6, 0,
-		{
-			{0, 3},
-			{1, 3},
-			{2, 3},
-			{3, 3},
-			{4, 3},
-			{5, 3},
-			{0, 0},
-			{0, 0},
-			{0, 0},
-			{0, 0}
-		}
-	}, {
-		9, 0,
-		{
-			{6, 2},
-			{7, 2},
-			{8, 2},
-			{9, 2},
-			{10, 2},
-			{11, 2},
-			{12, 2},
-			{13, 2},
-			{14, 2},
-			{0, 0}
-		}
-	}, {
-		5, 0,
-		{
-			{15, 3},
-			{16, 3},
-			{16, 3},
-			{17, 3},
-			{18, 3},
-			{19, 3},
-			{0, 0},
-			{0, 0},
-			{0, 0},
-			{0, 0}
-		}
-	}, {
-		10, 0,
-		{
-			{20, 2},
-			{21, 2},
-			{22, 2},
-			{23, 2},
-			{24, 2},
-			{25, 2},
-			{24, 2},
-			{23, 2},
-			{22, 2},
-			{21, 2}
-		}
-	}, {
-		10, 0,
-		{
-			{26, 2},
-			{27, 2},
-			{28, 2},
-			{29, 2},
-			{30, 2},
-			{31, 2},
-			{30, 2},
-			{29, 2},
-			{28, 2},
-			{27, 2}
-		}
-	}, {
-		10, 0,
-		{
-			{32, 2},
-			{33, 2},
-			{34, 2},
-			{35, 2},
-			{36, 2},
-			{37, 2},
-			{36, 2},
-			{35, 2},
-			{34, 2},
-			{33, 2}
-		}
-	}, {
-		10, 0,
-		{
-			{38, 2},
-			{39, 2},
-			{40, 2},
-			{41, 2},
-			{42, 2},
-			{43, 2},
-			{42, 2},
-			{41, 2},
-			{40, 2},
-			{39, 2}
-		}
-	}, {
-		4, 0,
-		{
-			{76, 4},
-			{77, 4},
-			{78, 4},
-			{79, 4},
-			{0, 0},
-			{0, 0},
-			{0, 0},
-			{0, 0},
-			{0, 0},
-			{0, 0}
-		}
-	}
-};
+	{6, 0, {{0, 3}, {1, 3}, {2, 3}, {3, 3}, {4, 3}, {5, 3}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}}, {9, 0, {{6, 2}, {7, 2}, {8, 2}, {9, 2}, {10, 2}, {11, 2}, {12, 2}, {13, 2}, {14, 2}, {0, 0}}}, {5, 0, {{15, 3}, {16, 3}, {16, 3}, {17, 3}, {18, 3}, {19, 3}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}}, {10, 0, {{20, 2}, {21, 2}, {22, 2}, {23, 2}, {24, 2}, {25, 2}, {24, 2}, {23, 2}, {22, 2}, {21, 2}}}, {10, 0, {{26, 2}, {27, 2}, {28, 2}, {29, 2}, {30, 2}, {31, 2}, {30, 2}, {29, 2}, {28, 2}, {27, 2}}}, {10, 0, {{32, 2}, {33, 2}, {34, 2}, {35, 2}, {36, 2}, {37, 2}, {36, 2}, {35, 2}, {34, 2}, {33, 2}}}, {10, 0, {{38, 2}, {39, 2}, {40, 2}, {41, 2}, {42, 2}, {43, 2}, {42, 2}, {41, 2}, {40, 2}, {39, 2}}}, {4, 0, {{76, 4}, {77, 4}, {78, 4}, {79, 4}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}}};
 
 int flies_enabled = 1;
 
@@ -238,30 +125,26 @@ int pogostick, bunnies_in_space, jetpack, lord_of_the_flies, blood_is_thicker_th
 
 int client_player_num = -1;
 
-int stricmp(const char* str1, const char* str2)
+int stricmp(const char *str1, const char *str2)
 {
 	int ca, cb;
 
-	do
-	{
+	do {
 		ca = tolower((unsigned char) *str1++);
 		cb = tolower((unsigned char) *str2++);
-	}
-	while(ca == cb && ca != '\0');
+	} while (ca == cb && ca != '\0');
 
 	return ca - cb;
 }
 
-int strnicmp(const char* str1, const char* str2, size_t count)
+int strnicmp(const char *str1, const char *str2, size_t count)
 {
 	int ca, cb;
 
-	do
-	{
+	do {
 		ca = tolower((unsigned char) *str1++);
 		cb = tolower((unsigned char) *str2++);
-	}
-	while(ca == cb && ca != '\0' && --count);
+	} while (ca == cb && ca != '\0' && --count);
 
 	return ca - cb;
 }
@@ -1103,7 +986,7 @@ void cpu_move(void)
 				 (i == 2 && key_pressed(KEY_PL3_JUMP)) ||
 				 (i == 3 && key_pressed(KEY_PL4_JUMP))))
 				jm = 0; // if we are on ground and jump key is being pressed,
-						//first we have to release it or else we won't be able to jump more than once
+						// first we have to release it or else we won't be able to jump more than once
 
 			else if (map_tile(cur_posx, cur_posy - 8) != BAN_VOID &&
 					 map_tile(cur_posx, cur_posy - 8) != BAN_WATER)

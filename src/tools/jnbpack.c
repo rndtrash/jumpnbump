@@ -1,7 +1,7 @@
 /*
  * pack.c
  * Copyright (C) 1998 Brainchild Design - http://brainchilddesign.com/
- * 
+ *
  * Copyright (C) 2001 "timecop" <timecop@japan.co.jp>
  *
  * Copyright (C) 2002 Florian Schulze <crow@icculus.org>
@@ -39,7 +39,13 @@
 #include <io.h>
 #endif
 
-#define WRITE(f,b,s) {if (write(f,b,s) != s){perror("Error while writing into file");exit(1);}}
+#define WRITE(f, b, s)                               \
+	{                                                \
+		if (write(f, b, s) != s) {                   \
+			perror("Error while writing into file"); \
+			exit(1);                                 \
+		}                                            \
+	}
 
 typedef struct {
 	char filename[12];
@@ -116,7 +122,7 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 
-		char* filename = strdup(argv[i]);
+		char *filename = strdup(argv[i]);
 		int valid = strlen(basename(filename)) <= 12;
 		if (!valid) {
 			fprintf(stderr, "filename %s is longer than 12 chars\n", argv[i]);
@@ -190,19 +196,16 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 		buf = malloc(datafile[i].size + 16);
-		if (!buf)
-		{
+		if (!buf) {
 			perror("malloc failed");
 			exit(1);
 		}
-		if (read(infd, buf, datafile[i].size) != datafile[i].size)
-		{
+		if (read(infd, buf, datafile[i].size) != datafile[i].size) {
 			perror("reading file");
 			exit(1);
 		}
 		close(infd);
-		if (write(fd, buf, datafile[i].size) != datafile[i].size)
-		{
+		if (write(fd, buf, datafile[i].size) != datafile[i].size) {
 			perror("writing to file");
 			exit(1);
 		}

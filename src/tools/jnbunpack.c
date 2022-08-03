@@ -1,7 +1,7 @@
 /*
  * unpack.c
  * Copyright (C) 1998 Brainchild Design - http://brainchilddesign.com/
- * 
+ *
  * Copyright (C) 2001 "timecop" <timecop@japan.co.jp>
  *
  * Copyright (C) 2002 Florian Schulze <crow@icculus.org>
@@ -62,8 +62,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 	/* get number of entries */
-	if (read(fd, &num_entries, 4) != 4)
-	{
+	if (read(fd, &num_entries, 4) != 4) {
 		perror("read num of entries");
 		exit(1);
 	}
@@ -71,14 +70,12 @@ int main(int argc, char **argv)
 	printf("%d entries in datafile\n", num_entries);
 
 	datafile = calloc(num_entries, sizeof(DirEntry));
-	if (!datafile)
-	{
+	if (!datafile) {
 		perror("malloc failed");
 		exit(1);
 	}
 
-	if (read(fd, datafile, num_entries * sizeof(DirEntry)) != (ssize_t) (num_entries * sizeof(DirEntry)))
-	{
+	if (read(fd, datafile, num_entries * sizeof(DirEntry)) != (ssize_t) (num_entries * sizeof(DirEntry))) {
 		perror("read entries");
 		free(datafile);
 		exit(1);
@@ -113,21 +110,18 @@ int main(int argc, char **argv)
 		}
 		lseek(fd, datafile[i].offset, SEEK_SET);
 		buf = calloc(1, datafile[i].size + 16);
-		if (!buf)
-		{
+		if (!buf) {
 			perror("malloc failed");
 			exit(1);
 		}
 
-		if (read(fd, buf, datafile[i].size) != datafile[i].size)
-		{
+		if (read(fd, buf, datafile[i].size) != datafile[i].size) {
 			perror("reading file");
 			free(buf);
 			exit(1);
 		}
 
-		if (write(outfd, buf, datafile[i].size) != datafile[i].size)
-		{
+		if (write(outfd, buf, datafile[i].size) != datafile[i].size) {
 			perror("writing to file");
 			free(buf);
 			exit(1);
