@@ -42,12 +42,12 @@ add_custom_command(
 
 add_custom_command(
 	OUTPUT jumpnbump.dat
-	COMMAND jnbpack -o jumpnbump.dat ${DATAFILES} ${GOBS}
+	COMMAND jnbpack -o ${CMAKE_CURRENT_BINARY_DIR}/jumpnbump.dat ${DATAFILES} ${GOBS}
 	DEPENDS jnbpack ${DATAFILES} ${GOBS}
 	VERBATIM
 )
 
-install(FILES jumpnbump.dat DESTINATION ${GAMEDATADIR}/jumpnbump)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/jumpnbump.dat DESTINATION ${GAMEDATADIR}/jumpnbump)
 
 add_custom_target(data ALL
 	DEPENDS jumpnbump.dat)
