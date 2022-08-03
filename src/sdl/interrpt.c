@@ -80,6 +80,7 @@ int intr_sysupdate()
 	while (SDL_PollEvent(&e)) {
 		switch (e.type) {
 			case SDL_QUIT:
+				printf("FIXME: exit gracefully\n");
 				SDL_Quit();
 				exit(1);
 				break;

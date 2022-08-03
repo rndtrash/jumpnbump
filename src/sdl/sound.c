@@ -298,6 +298,8 @@ void dj_deinit(void)
 	Mix_CloseAudio();
 #endif
 
+	close_screen();
+
 	SDL_Quit();
 }
 

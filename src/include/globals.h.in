@@ -308,6 +308,7 @@ void menu_deinit(void);
 
 void set_scaling(int scale);
 void open_screen(void);
+void close_screen(void);
 void wait_vrt(int mix);
 void draw_begin(void);
 void draw_end(void);

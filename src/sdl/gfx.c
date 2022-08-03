@@ -50,7 +50,7 @@ static SDL_Texture *jnb_texture;
 static SDL_Surface *jnb_surface;
 static int fullscreen = 0;
 static int vinited = 0;
-static void *screen_buffer[2];
+static void *screen_buffer[2] = { NULL };
 static int drawing_enable = 0;
 static void *background = NULL;
 static int background_drawn;
@@ -219,6 +219,7 @@ void open_screen(void)
 		printf("Couldn't load icon\n");
 	} else {
 		SDL_SetWindowIcon(sdlWindow, icon);
+		SDL_FreeSurface(icon); // according to the wiki (https://wiki.libsdl.org/SDL_SetWindowIcon), the surface is no longer needed
 	}
 
 	vinited = 1;
@@ -234,6 +235,16 @@ void open_screen(void)
 */
 
 	return;
+}
+
+void close_screen(void)
+{
+	SDL_FreeSurface(jnb_surface);
+	SDL_DestroyRenderer(sdlRenderer);
+	SDL_DestroyWindow(sdlWindow);
+
+	free(screen_buffer[0]);
+	free(screen_buffer[1]);
 }
 
 void fs_toggle()
