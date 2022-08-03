@@ -2,7 +2,12 @@ add_library(sdl STATIC "")
 
 find_package(SDL2 REQUIRED)
 
+set(SDL_HEADERS
+	filter.h
+)
+
 set(SDL_SOURCES
+	filter.c
 	gfx.c
 	input.c
 	interrpt.c
@@ -11,13 +16,9 @@ set(SDL_SOURCES
 
 target_sources(sdl
 	PRIVATE
+		${SDL_HEADERS}
 		${SDL_SOURCES}
 )
-
-#target_include_directories(sdl
-#	PUBLIC
-#		${SDL2_INCLUDE_DIRS}
-#)
 
 target_link_libraries(sdl
 	PUBLIC

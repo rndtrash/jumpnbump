@@ -8,7 +8,6 @@ set(JNB_HEADERS
 
 set(JNB_SOURCES
 	main.c
-	filter.c
 	menu.c
 	network.c
 )
