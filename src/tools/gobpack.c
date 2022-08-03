@@ -91,13 +91,22 @@ static void write_pcx(FILE *pcxfile, unsigned char *data, int width, int height,
 			fputc(i / 3, pcxfile);
 }
 
-int read_gob(FILE *handle, gob_t *gob, int len)
+int read_gob(FILE *handle, gob_t *gob, size_t len)
 {
 	unsigned char *gob_data;
 	int i;
 
+	(void) handle;
+
 	gob_data = malloc(len);
-	fread(gob_data, 1, len, handle);
+	if (!gob_data)
+		return 0;
+
+	if (fread(gob_data, 1, len, handle) != len)
+	{
+		free(gob_data);
+		return 0;
+	}
 
 	gob->num_images = (short) ((gob_data[0]) + (gob_data[1] << 8));
 
@@ -127,6 +136,7 @@ int read_gob(FILE *handle, gob_t *gob, int len)
 		memcpy(gob->orig_data[i], &gob_data[offset], image_size);
 		gob->data[i] = (unsigned short *) gob->orig_data[i];
 	}
+
 	free(gob_data);
 	return 0;
 }
@@ -225,7 +235,12 @@ int main(int argc, char **argv)
 				i = fgetc(f);
 				if (i == 0x0c) {
 					pal = palette;
-					fread(pal, 1, 768, f);
+					if (fread(pal, 1, 768, f) != 768)
+					{
+						printf("Failed to read the palette!\n");
+						fclose(f);
+						return -1;
+					}
 				}
 				fclose(f);
 			}
@@ -387,8 +402,16 @@ int main(int argc, char **argv)
 		while (!feof(f)) {
 			char buffer[1024];
 			int value;
+			int arguments;
 
-			fscanf(f, "%11s %i\n", buffer, &value);
+			arguments = fscanf(f, "%11s %i\n", buffer, &value);
+			if (arguments != 2)
+			{
+				printf("Parse error: arguments != 2\n");
+				code = -1;
+				goto fail_parse;
+			}
+
 			if (strcmp(buffer, "num_images:") == 0) {
 				if (gob.num_images != 0) {
 					printf("Parse error in %s\n", filename);

@@ -62,12 +62,28 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 	/* get number of entries */
-	read(fd, &num_entries, 4);
+	if (read(fd, &num_entries, 4) != 4)
+	{
+		perror("read num of entries");
+		exit(1);
+	}
 
 	printf("%d entries in datafile\n", num_entries);
 
 	datafile = calloc(num_entries, sizeof(DirEntry));
-	read(fd, datafile, num_entries * sizeof(DirEntry));
+	if (!datafile)
+	{
+		perror("malloc failed");
+		exit(1);
+	}
+
+	if (read(fd, datafile, num_entries * sizeof(DirEntry)) != (ssize_t) (num_entries * sizeof(DirEntry)))
+	{
+		perror("read entries");
+		free(datafile);
+		exit(1);
+	}
+
 	printf("Directory Listing:\n");
 	for (i = 0; i < num_entries; i++) {
 		char filename[14];
@@ -97,8 +113,26 @@ int main(int argc, char **argv)
 		}
 		lseek(fd, datafile[i].offset, SEEK_SET);
 		buf = calloc(1, datafile[i].size + 16);
-		read(fd, buf, datafile[i].size);
-		write(outfd, buf, datafile[i].size);
+		if (!buf)
+		{
+			perror("malloc failed");
+			exit(1);
+		}
+
+		if (read(fd, buf, datafile[i].size) != datafile[i].size)
+		{
+			perror("reading file");
+			free(buf);
+			exit(1);
+		}
+
+		if (write(outfd, buf, datafile[i].size) != datafile[i].size)
+		{
+			perror("writing to file");
+			free(buf);
+			exit(1);
+		}
+
 		close(outfd);
 		free(buf);
 		printf("OK\n");

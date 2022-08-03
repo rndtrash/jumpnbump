@@ -39,6 +39,8 @@
 #include <io.h>
 #endif
 
+#define WRITE(f,b,s) {if (write(f,b,s) != s){perror("Error while writing into file");exit(1);}}
+
 typedef struct {
 	char filename[12];
 	unsigned int offset;
@@ -143,36 +145,36 @@ int main(int argc, char **argv)
 		char temp;
 
 		temp = (num_entries >> 0) & 0xff;
-		write(fd, &temp, 1);
+		WRITE(fd, &temp, 1);
 		temp = (num_entries >> 8) & 0xff;
-		write(fd, &temp, 1);
+		WRITE(fd, &temp, 1);
 		temp = (num_entries >> 16) & 0xff;
-		write(fd, &temp, 1);
+		WRITE(fd, &temp, 1);
 		temp = (num_entries >> 24) & 0xff;
-		write(fd, &temp, 1);
+		WRITE(fd, &temp, 1);
 	}
 
 	/* write the directory structure */
 	for (i = 0; i < num_entries; i++) {
 		char temp;
 
-		write(fd, datafile[i].filename, 12);
+		WRITE(fd, datafile[i].filename, 12);
 		temp = (datafile[i].offset >> 0) & 0xff;
-		write(fd, &temp, 1);
+		WRITE(fd, &temp, 1);
 		temp = (datafile[i].offset >> 8) & 0xff;
-		write(fd, &temp, 1);
+		WRITE(fd, &temp, 1);
 		temp = (datafile[i].offset >> 16) & 0xff;
-		write(fd, &temp, 1);
+		WRITE(fd, &temp, 1);
 		temp = (datafile[i].offset >> 24) & 0xff;
-		write(fd, &temp, 1);
+		WRITE(fd, &temp, 1);
 		temp = (datafile[i].size >> 0) & 0xff;
-		write(fd, &temp, 1);
+		WRITE(fd, &temp, 1);
 		temp = (datafile[i].size >> 8) & 0xff;
-		write(fd, &temp, 1);
+		WRITE(fd, &temp, 1);
 		temp = (datafile[i].size >> 16) & 0xff;
-		write(fd, &temp, 1);
+		WRITE(fd, &temp, 1);
 		temp = (datafile[i].size >> 24) & 0xff;
-		write(fd, &temp, 1);
+		WRITE(fd, &temp, 1);
 	}
 
 	/* write in the actual files */
@@ -188,9 +190,22 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 		buf = malloc(datafile[i].size + 16);
-		read(infd, buf, datafile[i].size);
+		if (!buf)
+		{
+			perror("malloc failed");
+			exit(1);
+		}
+		if (read(infd, buf, datafile[i].size) != datafile[i].size)
+		{
+			perror("reading file");
+			exit(1);
+		}
 		close(infd);
-		write(fd, buf, datafile[i].size);
+		if (write(fd, buf, datafile[i].size) != datafile[i].size)
+		{
+			perror("writing to file");
+			exit(1);
+		}
 		free(buf);
 		printf(" OK\n");
 	}
