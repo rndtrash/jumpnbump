@@ -25,6 +25,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+/*#ifdef PSP
+#include <pspkernel.h>
+
+PSP_MODULE_INFO("jumpnbump", 1, 70, 0);
+PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
+#endif*/
+
 #include "globals.h"
 #include <fcntl.h>
 #ifndef _WIN32
@@ -293,6 +300,7 @@ static void player_kill(int c1, int c2)
 
 static void check_cheats(void)
 {
+#ifndef PSP
 	if (strncmp(last_keys, "kcitsogop", strlen("kcitsogop")) == 0) {
 		pogostick ^= 1;
 		last_keys[0] = 0;
@@ -332,6 +340,7 @@ static void check_cheats(void)
 		recalculate_gob(&object_gobs, pal);
 		last_keys[0] = 0;
 	}
+#endif
 }
 
 static void collision_check(void)
@@ -2116,7 +2125,9 @@ static void preread_datafile(const char *fname)
 
 int init_program(int argc, char *argv[], char *pal)
 {
+#ifdef USE_NET
 	char *netarg = NULL;
+#endif
 	unsigned char *handle = (unsigned char *) NULL;
 	int c1 = 0, c2 = 0;
 	int load_flag = 0;
@@ -2148,6 +2159,10 @@ int init_program(int argc, char *argv[], char *pal)
 
 	strcpy(datfile_name, DATA_PATH);
 
+#ifdef PSP
+	fs_toggle();
+#endif
+
 	if (argc > 1) {
 		for (c1 = 1; c1 < argc; c1++) {
 			if (stricmp(argv[c1], "-nosound") == 0)
@@ -2160,7 +2175,7 @@ int init_program(int argc, char *argv[], char *pal)
 				flies_enabled = 0;
 			else if (stricmp(argv[c1], "-nojoy") == 0)
 				main_info.joy_enabled = 0;
-#ifdef USE_SDL
+#if defined(USE_SDL) && !defined(PSP)
 			else if (stricmp(argv[c1], "-fullscreen") == 0)
 				fs_toggle();
 #endif
@@ -2197,11 +2212,11 @@ int init_program(int argc, char *argv[], char *pal)
 				}
 #endif
 			} else if (strstr(argv[1], "-v")) {
-				printf("jumpnbump %s compiled with", JNB_VERSION);
+				printf("jumpnbump %s compiled with"
 #ifndef USE_NET
-				printf("out");
+				"out"
 #endif
-				printf(" network support.\n");
+				" network support.\n", JNB_VERSION);
 				return 1;
 			} else if (strstr(argv[1], "-h")) {
 				printf("Usage: jumpnbump [OPTION]...\n");

@@ -5,8 +5,14 @@ project(JumpNBump VERSION 1.70.0)
 include(GNUInstallDirs)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-set(DATADIR ${CMAKE_INSTALL_PREFIX}/share)
-set(GAMEDATADIR ${CMAKE_INSTALL_PREFIX}/share)
+
+if (PSP)
+	set(DATADIR ".")
+	set(GAMEDATADIR ".")
+else()
+	set(DATADIR ${CMAKE_INSTALL_PREFIX}/share)
+	set(GAMEDATADIR ${CMAKE_INSTALL_PREFIX}/share)
+endif()
 
 option(USE_SDL "Use SDL2" ON)
 if(USE_SDL)

@@ -8,4 +8,6 @@ if(USE_SDL)
 endif()
 
 add_subdirectory(game)
-add_subdirectory(tools)
+if(NOT PLATFORM_PSP)
+	add_subdirectory(tools)
+endif()

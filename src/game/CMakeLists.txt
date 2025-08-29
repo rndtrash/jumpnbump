@@ -7,9 +7,9 @@ set(JNB_HEADERS
 )
 
 set(JNB_SOURCES
+	network.c
 	main.c
 	menu.c
-	network.c
 )
 
 target_sources(jumpnbump
@@ -29,13 +29,51 @@ target_link_libraries(jumpnbump
 		m
 )
 
+if (PSP)
+	target_link_libraries(jumpnbump
+		PRIVATE
+			-L${PSPDEV}/psp/lib
+#			-lg
+			-lc
+			-lGLU
+			-lglut
+#			-lz
+#			-lm
+			-lGL
+			-lvorbisfile
+			-lvorbis
+			-logg
+			-lmikmod
+			-L${PSPDEV}/psp/sdk/lib
+			-L${PSPDEV}/psp
+			-lc
+			-lpspvfpu
+			-lpspgu
+			-lpspctrl
+			-lpspge
+			-lpspdisplay
+			-lpsphprm
+			-lpspaudio
+#			-lpspnet_inet
+			-lpspvram
+	)
+
+	create_pbp_file(TARGET jumpnbump
+		TITLE [=[Jump \\'n Bump]=]
+		ICON_PATH NULL
+		BACKGROUND_PATH NULL
+		PREVIEW_PATH NULL
+#		BUILD_PRX
+	)
+endif()
+
 target_include_directories(jumpnbump
 	PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 
-if(USE_NET)
+if (USE_NET)
 	find_package(SDL2_net REQUIRED)
 	target_link_libraries(jumpnbump
 		PRIVATE
@@ -66,4 +104,3 @@ if(ZLIB_SUPPORT)
 			${ZLIB_LIBRARIES}
 	)
 endif()
-

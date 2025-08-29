@@ -46,16 +46,15 @@ int dirty_block_shift = 4;
 
 static SDL_Window *sdlWindow;
 static SDL_Renderer *sdlRenderer;
-static SDL_Texture *jnb_texture;
-static SDL_Surface *jnb_surface;
+static SDL_Texture *sdlTexture;
+static SDL_Surface *sdlSurface;
 static int fullscreen = 0;
 static int vinited = 0;
-static void *screen_buffer[2] = {NULL};
 static int drawing_enable = 0;
 static void *background = NULL;
 static int background_drawn;
 static void *mask = NULL;
-static int dirty_blocks[2][25 * 16 * 2];
+static int dirty_blocks[25 * 16 * 2];
 
 static SDL_Surface *load_xpm_from_array(char **xpm)
 {
@@ -149,13 +148,6 @@ static SDL_Surface *load_xpm_from_array(char **xpm)
 	return surface;
 }
 
-unsigned char *get_vgaptr(int page, int x, int y)
-{
-	assert(drawing_enable == 1);
-
-	return (unsigned char *) screen_buffer[page] + (y * screen_pitch) + (x);
-}
-
 void set_scaling(int scale)
 {
 	if (scale == 1) {
@@ -184,35 +176,39 @@ void open_screen(void)
 		exit(EXIT_FAILURE);
 	}
 
-	flags = SDL_WINDOW_RESIZABLE;
+	flags = 0; //SDL_WINDOW_RESIZABLE;
 	if (fullscreen)
 		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-	SDL_CreateWindowAndRenderer(screen_width, screen_height, flags, &sdlWindow, &sdlRenderer);
+	sdlWindow = SDL_CreateWindow("Jump 'n Bump", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screen_width, screen_height, flags);
 
-	if (!sdlWindow || !sdlRenderer) {
-		fprintf(stderr, "SDL ERROR: %s\n", SDL_GetError());
-		exit(EXIT_FAILURE);
-	}
-	SDL_RenderSetLogicalSize(sdlRenderer, screen_width, screen_height);
-
-	jnb_texture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STREAMING, screen_width, screen_height);
-	if (!jnb_texture) {
+	if (!sdlWindow) {
 		fprintf(stderr, "SDL ERROR: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 
-	jnb_surface = SDL_CreateRGBSurface(0, screen_width, screen_height, 8, 0, 0, 0, 0);
-	if (!jnb_surface) {
+	sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED);
+	if (!sdlRenderer) {
 		fprintf(stderr, "SDL ERROR: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 
+	sdlSurface = SDL_GetWindowSurface(sdlWindow);
+	if (!sdlSurface) {
+		fprintf(stderr, "SDL ERROR: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+
+	sdlTexture = SDL_CreateTextureFromSurface(sdlRenderer, sdlSurface);
+	if (!sdlTexture) {
+		fprintf(stderr, "SDL ERROR: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+
+#ifndef PSP
 	if (fullscreen)
 		SDL_ShowCursor(0);
 	else
 		SDL_ShowCursor(1);
-
-	SDL_SetWindowTitle(sdlWindow, "Jump 'n Bump");
 
 	icon = load_xpm_from_array(jumpnbump_xpm);
 	if (icon == NULL) {
@@ -221,30 +217,21 @@ void open_screen(void)
 		SDL_SetWindowIcon(sdlWindow, icon);
 		SDL_FreeSurface(icon); // according to the wiki (https://wiki.libsdl.org/SDL_SetWindowIcon), the surface is no longer needed
 	}
+#endif
 
 	vinited = 1;
 
 	memset(dirty_blocks, 0, sizeof(dirty_blocks));
-
-	screen_buffer[0] = malloc(screen_width * screen_height);
-	screen_buffer[1] = malloc(screen_width * screen_height);
-
-	/*
-	dirty_blocks[0]=malloc(sizeof(int)*25*16+1000);
-	dirty_blocks[1]=malloc(sizeof(int)*25*16+1000);
-*/
 
 	return;
 }
 
 void close_screen(void)
 {
-	SDL_FreeSurface(jnb_surface);
+	SDL_DestroyTexture(sdlTexture);
+	// Window surface is destroyed automatically
 	SDL_DestroyRenderer(sdlRenderer);
 	SDL_DestroyWindow(sdlWindow);
-
-	free(screen_buffer[0]);
-	free(screen_buffer[1]);
 }
 
 void fs_toggle()
@@ -274,6 +261,7 @@ void clear_page(int page, int color)
 
 	for (i = 0; i < (25 * 16); i++)
 		dirty_blocks[page][i] = 1;
+	memset(&dirty_blocks, 1, sizeof(dirty_blocks));
 
 	for (i = 0; i < screen_height; i++)
 		for (j = 0; j < screen_width; j++)
@@ -324,6 +312,8 @@ int get_pixel(int page, int x, int y)
 	assert(x < screen_width);
 	assert(y < screen_height);
 
+	SDL_RenderReadPixels(sdlRenderer, );
+
 	return *(unsigned char *) get_vgaptr(page, x, y);
 }
 
@@ -346,53 +336,21 @@ void set_pixel(int page, int x, int y, int color)
 
 void flippage(int page)
 {
-	int x, y;
-	unsigned char *src;
-	unsigned char *dest;
-	SDL_Surface *surface;
-
 	assert(drawing_enable == 0);
 
-	SDL_LockSurface(jnb_surface);
-	if (!jnb_surface->pixels) {
+	if (!sdlSurface->pixels) {
 
-		for (x = 0; x < (25 * 16); x++) {
-			dirty_blocks[0][x] = 1;
-			dirty_blocks[1][x] = 1;
-		}
+		memset(&dirty_blocks, 1, sizeof(dirty_blocks));
 
 		return;
 	}
-	dest = (unsigned char *) jnb_surface->pixels;
-	src = screen_buffer[page];
-	for (y = 0; y < screen_height; y++) {
-		for (x = 0; x < 25; x++) {
-			int count;
-			int test_x;
 
-			count = 0;
-			test_x = x;
-			while ((test_x < 25) && (dirty_blocks[page][(y >> dirty_block_shift) * 25 + test_x])) {
-				count++;
-				test_x++;
-			}
-			if (count) {
-				memcpy(
-					&dest[y * jnb_surface->pitch + (x << dirty_block_shift)],
-					&src[y * screen_pitch + (x << dirty_block_shift)],
-					((16 << dirty_block_shift) >> 4) * count);
-			}
-			x = test_x;
-		}
-	}
-	memset(&dirty_blocks[page], 0, sizeof(int) * 25 * 16);
-	SDL_UnlockSurface(jnb_surface);
+	// TODO: some shite to redraw blocks
 
-	surface = SDL_ConvertSurfaceFormat(jnb_surface, SDL_PIXELFORMAT_RGB888, 0);
-	SDL_UpdateTexture(jnb_texture, NULL, surface->pixels, screen_width * sizeof(Uint32));
-	SDL_FreeSurface(surface);
+	memset(&dirty_blocks, 0, sizeof(dirty_blocks));
+
 	SDL_RenderClear(sdlRenderer);
-	SDL_RenderCopy(sdlRenderer, jnb_texture, NULL, NULL);
+	SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
 	SDL_RenderPresent(sdlRenderer);
 }
 
@@ -494,6 +452,9 @@ void put_block(int page, int x, int y, int width, int height, void *buffer)
 	unsigned char *vga_ptr, *buffer_ptr;
 
 	assert(drawing_enable == 1);
+
+	if (x + width < 0 || y + height < 0 || x > width || y > height)
+		return;
 
 	if (scale_up) {
 		x *= 2;

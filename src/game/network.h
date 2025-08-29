@@ -102,6 +102,8 @@ void tellServerGoodbye(void);
 
 void tellServerNewPosition(void);
 
+#endif
+
 void processKillPacket(NetPacket *pkt);
 
 void processPositionPacket(NetPacket *pkt);
@@ -117,6 +119,8 @@ void serverSendAlive(int playerid);
 void serverSendKillPacket(int killer, int victim);
 
 void update_players_from_clients(void);
+
+#if USE_NET
 
 void init_server(const char *netarg);
 
